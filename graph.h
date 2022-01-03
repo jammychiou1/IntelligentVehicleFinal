@@ -4,18 +4,27 @@
 #include <map>
 #include <vector>
 #include <utility>
+#include <queue>
 
 class Graph {
     public:
         Graph();
-        std::vector<int> add_path(std::vector<int> delays, int start_time);
+
+        // invalidate last calc_time
+        std::pair<int, std::vector<int>> add_path(std::vector<int> delays, int start_time);
         void add_type2_edge(int u, int v);
         int add_type3_pair(int u1, int v1, int u2, int v2);
-        void remove_node(int u);
-        bool calc_time();
         void change_used(std::map<int, bool> used);
-        void commit_used();
+        void optimize();
+        
+        // calc_time before commit_used / get_time
+        bool calc_time();
         int get_time(int u);
+        void commit_used();
+
+        // after commit used
+        void remove_node(int u);
+        void fix_node_time(int u);
 
     private:
         struct _Edge {
@@ -30,21 +39,30 @@ class Graph {
             int delay;
             int in_deg;
             int tmp_in_deg;
-            int time;
+            int lowest_time;
             int tmp_time;
+            bool time_fixed;
             std::map<int, _Edge> adjs;
         };
         struct _Type3Pair {
             int u1, v1, u2, v2;
             int eg1, eg2;
             bool use_first;
+            bool enabled;
+        };
+        struct _Path {
+            std::deque<int> nodes;
+            //bool time_fixed;
+            int start_time;
         };
         std::map<int, _Node> _nodes;
         std::map<int, _Type3Pair> _pairs;
+        std::map<int, _Path> _paths;
         int _path_id_now = 0;
         int _edge_id_now = 0;
         int _node_id_now = 0;
         int _pair_id_now = 0;
+        bool _just_calc_ed = false;
 };
 
 #endif
