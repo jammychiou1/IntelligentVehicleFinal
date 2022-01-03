@@ -1,9 +1,10 @@
 #include "vehicle.h"
 #include "lane_controller.h"
 
-LaneController::LaneController(int* time_p, int waiting_time){
-	this._time_p = time_p;
-	this._waiting_time = waiting_time;
+LaneController::LaneController(int id, int* time_p, int waiting_time){
+	this->id = id;
+	this->_time_p = time_p;
+	this->_waiting_time = waiting_time;
 }
 void LaneController::enter(Vehicle veh_p){
 	_Veh_Time tmp;

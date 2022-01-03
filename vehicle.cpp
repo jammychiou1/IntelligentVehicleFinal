@@ -10,7 +10,7 @@ void Vehicle::update(){
 		this->now_location++;
 		if(this->now_location < this->_route.size()){
 			if(this->_route[now_location].index() == 0){
-				std::get<IntersectionController*>(this->_route[now_location])->enter(this);
+				std::get<IntersectionController*>(this->_route[now_location])->enter(this, std::get<LaneController*>(this->_route[now_location + 1])->id, std::get<LaneController*>(this->_route[now_location + 1])->id);
 			}
 			else if(this->_route[now_location].index() == 1){
 				std::get<LaneController*>(this->_route[now_location])->enter(this);	
