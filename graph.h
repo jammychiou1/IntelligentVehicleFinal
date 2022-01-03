@@ -15,6 +15,7 @@ class Graph {
         bool calc_time();
         void change_used(std::map<int, bool> used);
         void commit_used();
+        int get_time(int u);
 
     private:
         struct _Edge {
@@ -30,6 +31,7 @@ class Graph {
             int in_deg;
             int tmp_in_deg;
             int time;
+            int tmp_time;
             std::map<int, _Edge> adjs;
         };
         struct _Type3Pair {

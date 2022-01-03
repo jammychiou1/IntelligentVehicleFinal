@@ -62,8 +62,8 @@ int Graph::add_type3_pair(int u1, int v1, int u2, int v2) {
     assert(_nodes.count(v1));
     assert(_nodes.count(u2));
     assert(_nodes.count(v2));
-    assert(_nodes[u1].path_id == _nodes[v1].path_id);
-    assert(_nodes[u2].path_id == _nodes[v2].path_id);
+    assert(_nodes[u1].path_id == _nodes[v2].path_id);
+    assert(_nodes[u2].path_id == _nodes[v1].path_id);
     assert(_nodes[u1].path_id != _nodes[u2].path_id);
     _Edge edge1, edge2;
     _Type3Pair t3p;
@@ -127,9 +127,10 @@ bool Graph::calc_time() {
         _Node &node = p.second;
         if (node.tmp_in_deg == 0) {
             queue.push_back(node.id);
+            node.tmp_time = node.time;
         }
         else {
-            node.time = 0;
+            node.tmp_time = 0;
         }
     }
     int cnt = 0;
@@ -153,7 +154,7 @@ bool Graph::calc_time() {
                     }
                 }
             }
-            _nodes[edge.v].time = max(_nodes[edge.v].time, _nodes[u].time + _nodes[u].delay);
+            _nodes[edge.v].tmp_time = max(_nodes[edge.v].tmp_time, _nodes[u].tmp_time + _nodes[u].delay);
             _nodes[edge.v].tmp_in_deg--;
             if (_nodes[edge.v].tmp_in_deg == 0) {
                 queue.push_back(edge.v);
@@ -179,10 +180,18 @@ void Graph::commit_used() {
         if (t3p.use_first) {
             _nodes[t3p.u2].adjs.erase(t3p.eg2);
             _nodes[t3p.v2].in_deg--;
+            _nodes[t3p.u1].adjs[t3p.eg1].type = 2;
         }
         else {
             _nodes[t3p.u1].adjs.erase(t3p.eg1);
             _nodes[t3p.v1].in_deg--;
+            _nodes[t3p.u2].adjs[t3p.eg2].type = 2;
         }
     }
+    _pairs.clear();
+}
+
+int Graph::get_time(int u) {
+    assert(_nodes.count(u));
+    return _nodes[u].tmp_time;
 }
