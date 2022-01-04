@@ -15,6 +15,8 @@ class Graph {
         void add_type2_edge(int u, int v);
         int add_type3_pair(int u1, int v1, int u2, int v2);
         void change_used(std::map<int, bool> used);
+        
+        // need to commit / calc after optimize
         void optimize();
         
         // calc_time before commit_used / get_time
@@ -27,6 +29,9 @@ class Graph {
         void fix_node_time(int u);
 
     private:
+        int _sum_exit();
+        void _optimize_sub(std::vector<int> considered_paths, std::vector<int> considered_pairs);
+
         struct _Edge {
             int id;
             int type;

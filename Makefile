@@ -2,7 +2,7 @@
 
 $(shell mkdir -p obj)
 
-TARGET := test/graph
+TARGET := test/graph test/optimize
 
 CC := g++
 CCFLAGS := -Wall -std=gnu++17 -ggdb
@@ -15,8 +15,8 @@ obj/graph.o: graph.cpp graph.h
 test/graph: obj/graph.o test/graph.cpp
 	$(CC) $(CCFLAGS) -o $@ $^
 
+test/optimize: obj/graph.o test/optimize.cpp
+	$(CC) $(CCFLAGS) -o $@ $^
+
 clean:
 	rm -f $(TARGET) obj/*.o
-
-
-	

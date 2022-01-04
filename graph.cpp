@@ -8,6 +8,8 @@ using std::cout;
 using std::vector, std::map, std::deque, std::pair;
 using std::max;
 
+const int INF = 1e9;
+
 Graph::Graph() {
     cout << "graph created\n";
 }
@@ -249,4 +251,131 @@ void Graph::fix_node_time(int u) {
     assert(!_nodes[u].time_fixed);
     //_paths[path_id].time_fixed = true;
     _nodes[u].time_fixed = true;
+}
+
+void Graph::optimize() {
+    vector<int> considered_paths;
+    vector<int> considered_pairs;
+    for (auto &p : _paths) {
+        considered_paths.push_back(p.first);
+    }
+    for (auto p : _pairs) {
+        considered_pairs.push_back(p.first);
+    }
+    _optimize_sub(considered_pairs, considered_pairs);
+    for (auto p : _pairs) {
+        assert(p.second.enabled);
+    }
+}
+void Graph::_optimize_sub(vector<int> considered_paths, vector<int> considered_pairs) {
+    for (int pid : considered_pairs) {
+        _Type3Pair &t3p = _pairs[pid];
+        assert(t3p.enabled);
+        t3p.enabled = false;
+    }
+    bool failed = false;
+    for (int i = 0; i < (int) considered_pairs.size(); i++) {
+        int impact = INF;
+        pair<int, bool> best;
+        bool found = false;
+        int baseline = _sum_exit();
+        for (int pid : considered_pairs) {
+            _Type3Pair &t3p = _pairs[pid];
+            if (!t3p.enabled) {
+                t3p.enabled = true;
+
+                t3p.use_first = true;
+                if (calc_time()) {
+                    found = true;
+                    int tmp = _sum_exit() - baseline;
+                    if (tmp < impact) {
+                        impact = tmp;
+                        best = {pid, true};
+                    }
+                }
+                
+                t3p.use_first = false;
+                if (calc_time()) {
+                    found = true;
+                    int tmp = _sum_exit() - baseline;
+                    if (tmp < impact) {
+                        impact = tmp;
+                        best = {pid, false};
+                    }
+                }
+
+                t3p.enabled = false;
+            }
+        }
+        if (found) {
+            int pid = best.first;
+            bool use_first = best.second;
+            _pairs[pid].enabled = true;
+            _pairs[pid].use_first = use_first;
+        }
+        else {
+            failed = true;
+            break;
+        }
+    }
+    if (!failed) {
+        return;
+    }
+    int N = considered_paths.size();
+    int thresh = considered_paths[N / 2];
+    vector<int> considered_pairs_low;
+    vector<int> considered_pairs_high;
+    for (int pid : considered_pairs) {
+        _Type3Pair &t3p = _pairs[pid];
+        int path_id1 = _nodes[t3p.u1].path_id;
+        int path_id2 = _nodes[t3p.u2].path_id;
+        if (path_id1 >= thresh) {
+            if (path_id2 >= thresh) {
+                t3p.enabled = false;
+                considered_pairs_high.push_back(pid);
+            }
+            else {
+                t3p.enabled = true;
+                t3p.use_first = false;
+            }
+        }
+        else {
+            if (path_id2 >= thresh) {
+                t3p.enabled = true;
+                t3p.use_first = true;
+            }
+            else {
+                t3p.enabled = true;
+                considered_pairs_low.push_back(pid);
+            }
+        }
+    }
+    vector<int> considered_paths_low;
+    vector<int> considered_paths_high;
+    for (int i = 0; i < N / 2; i++) {
+        considered_paths_low.push_back(considered_paths[i]);
+    }
+    for (int i = N / 2; i < N; i++) {
+        considered_paths_high.push_back(considered_paths[i]);
+    }
+    _optimize_sub(considered_paths_low, considered_pairs_low);
+    for (int pid : considered_pairs_low) {
+        assert(_pairs[pid].enabled);
+    }
+    for (int pid : considered_pairs_high) {
+        assert(!_pairs[pid].enabled);
+        _pairs[pid].enabled = true;
+    }
+    _optimize_sub(considered_paths_high, considered_pairs_high);
+    for (int pid : considered_pairs_high) {
+        assert(_pairs[pid].enabled);
+    }
+}
+int Graph::_sum_exit() {
+    int ans = 0;
+    for (auto &p : _paths) {
+        _Path &path = p.second;
+        ans += _nodes[path.nodes.back()].tmp_time;
+    }
+    return ans;
 }
