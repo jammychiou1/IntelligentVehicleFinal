@@ -21,6 +21,12 @@ obj/intersection_controller.o: intersection_controller.cpp intersection_controll
 obj/lane_controller.o: lane_controller.cpp lane_controller.h vehicle.h
 	$(CC) $(CCFLAGS) -c -o $@ $<
 
+obj/source_lane.o: source_lane.cpp source_lane.h vehicle.h scenario.h
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+obj/destination_lane.o: destination_lane.cpp destination_lane.h vehicle.h
+	$(CC) $(CCFLAGS) -c -o $@ $<
+	
 test/graph: obj/graph.o graph.h test/graph.cpp
 	$(CC) $(CCFLAGS) -o $@ $^
 

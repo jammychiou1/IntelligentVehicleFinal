@@ -24,7 +24,7 @@ void Vehicle::update() {
                 _scenario->intersections[node.id].enter(this, _route[_now_location - 1].id, _route[_now_location + 1].id);
 			}
 			else {
-                _scenario->lanes[node.id].enter(this);
+                _scenario->lane_controllers[node.id].enter(this);
 			}
 		}
 	}
