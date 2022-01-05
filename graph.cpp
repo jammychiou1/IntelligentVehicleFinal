@@ -1,8 +1,8 @@
-#include "graph.h"
-
 #include <iostream>
 #include <cassert>
 #include <queue>
+
+#include "graph.h"
 
 using std::cout;
 using std::vector, std::map, std::deque, std::pair;
@@ -53,7 +53,7 @@ pair<int, vector<int>> Graph::add_path(std::vector<int> delays, int start_time) 
 void Graph::add_type2_edge(int u, int v) {
     assert(_nodes.count(u));
     assert(_nodes.count(v));
-    assert(_nodes[u].path_id != _nodes[v].path_id);
+    assert(_nodes[u].path_id < _nodes[v].path_id);
     assert(!_nodes[u].time_fixed);
     //assert(!_paths[_nodes[v].path_id].time_fixed);
     _Edge edge;

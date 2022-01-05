@@ -1,19 +1,29 @@
 #ifndef VEHICLE_H
 #define VEHICLE_H
 
-#include <variant>
 #include <vector>
-#include "intersection_controller.h"
-#include "lane_controller.h"
 
-class Vehicle{
+class Scenario;
+
+enum class RouteNodeType {
+    intersection, lane
+};
+
+struct RouteNode {
+    RouteNodeType type;
+    int id;
+};
+
+class Vehicle {
 	public:
-		Vehicle(std::vector<std::variant<IntersectionController*, LaneController*>> route);
-		bool go_next;
+		Vehicle(std::vector<RouteNode> route, Scenario *scenario);
+        void go_next();
 		void update();
 	private:
-		std::vector<std::variant<IntersectionController*, LaneController*>> _route;
-		int now_location;
+		std::vector<RouteNode> _route;
+		bool _should_go_next;
+		int _now_location;
+        Scenario *_scenario;
 };
 
 #endif

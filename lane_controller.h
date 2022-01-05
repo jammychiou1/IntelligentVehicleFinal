@@ -7,17 +7,18 @@ class Vehicle;
 
 class LaneController{
 	public:
-		LaneController(int id, int* time_p, int waiting_time);
-		void enter(Vehicle* veh_p);
+		LaneController(int id = 0, int waiting_time = 0, int *time_p = nullptr);
+		void enter(Vehicle *veh_p);
 		void update();
-		int id;
+		//int id;
 	private:
-		struct _Veh_Time{
-			Vehicle* veh_p;
+		struct _VehTime{
+			Vehicle *veh_p;
 			int in_time;
 		};
-		std::queue<_Veh_Time> queue;
-		int *time, waiting_time;
+		std::deque<_VehTime> queue;
+		int *_time_p;
+        int _waiting_time;
 };
 
 #endif
