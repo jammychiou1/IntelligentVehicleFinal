@@ -16,7 +16,7 @@ struct RouteNode {
 
 class Vehicle {
 	public:
-		Vehicle(std::vector<RouteNode> route, Scenario *scenario);
+		Vehicle(std::vector<RouteNode> route = {}, Scenario *scenario = nullptr);
         void go_next();
 		void update();
 	private:
