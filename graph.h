@@ -15,6 +15,9 @@ class Graph {
         void add_type2_edge(int u, int v);
         int add_type3_pair(int u1, int v1, int u2, int v2);
         void change_used(std::map<int, bool> used);
+
+        // call before calc_time/ optimize
+        void update_time_now(int now);
         
         // need to commit / calc after optimize
         void optimize();
@@ -68,6 +71,7 @@ class Graph {
         int _node_id_now = 0;
         int _pair_id_now = 0;
         bool _just_calc_ed = false;
+        int _time_now = -1;
 };
 
 #endif

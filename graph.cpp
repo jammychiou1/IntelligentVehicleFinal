@@ -158,7 +158,7 @@ bool Graph::calc_time() {
         if (node.tmp_in_deg == 0) {
             queue.push_back(node.id);
         }
-        node.tmp_time = node.lowest_time;
+        node.tmp_time = max(_time_now, node.lowest_time);
     }
     int cnt = 0;
     while (!queue.empty()) {
@@ -251,6 +251,11 @@ void Graph::fix_node_time(int u) {
     assert(!_nodes[u].time_fixed);
     //_paths[path_id].time_fixed = true;
     _nodes[u].time_fixed = true;
+}
+
+void Graph::update_time_now(int now) {
+    assert(now > _time_now);
+    _time_now = now;
 }
 
 void Graph::optimize() {
