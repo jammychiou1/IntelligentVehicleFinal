@@ -2,7 +2,7 @@
 #include <vector>
 #include <cassert>
 
-#include "../graph.h"
+#include "graph.h"
 
 using namespace std;
 

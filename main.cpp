@@ -11,6 +11,6 @@ int main() {
     vector<RouteNode> route;
     Vehicle(route, &scenario);
     int time;
-    IntersectionController intersection(0, {}, {}, &time);
-    LaneController lane(0, 5, &time);
+    IntersectionController intersection(0, {}, {}, nullptr);
+    LaneController lane(0, 5, nullptr);
 }

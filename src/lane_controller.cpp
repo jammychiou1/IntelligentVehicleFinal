@@ -3,11 +3,12 @@
 #include "lane_controller.h"
 
 #include "vehicle.h"
+#include "simulator.h"
 
-LaneController::LaneController(int id, int waiting_time, int *time_p) {
+LaneController::LaneController(int id, int waiting_time, Simulator* simulator_p) {
 	//id = id;
     //assert(time_p != nullptr);
-	_time_p = time_p;
+    _simulator_p = simulator_p;
 	_waiting_time = waiting_time;
 }
 
@@ -22,6 +23,7 @@ void LaneController::update(){
 	while (queue.size() > 0 && queue.front().in_time + _waiting_time <= *_time_p) {
 		Vehicle* veh_p = queue.front().veh_p;
         queue.pop_front();
-		veh_p->go_next();
+        _simulator_p->tell_go_next(veh_p);
+		//veh_p->go_next();
 	}
 }

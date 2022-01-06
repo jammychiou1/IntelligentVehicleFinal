@@ -2,12 +2,15 @@
 
 #include "source_lane.h"
 #include "vehicle.h"
+#include "scenario.h"
+#include "simulator.h"
 
-SourceLane::SourceLane(int id, double prob, Scenario* scenario_p, std::default_random_engine* gen_p){
+SourceLane::SourceLane(int id, double prob, Scenario* scenario_p, Simulator* simulator_p, std::default_random_engine* gen_p){
     _id = id;
     _prob = prob;
     _scenario_p = scenario_p;
-    _distribution = std::uniform_real_distribution<double>(0.0,1.0);
+    _simulator_p = simulator_p;
+    _distribution = std::uniform_real_distribution<double>(0.0, 1.0);
     _gen_p = gen_p;
 }
 bool SourceLane::_dfs_route(int now_intersection_id, int last_lane_id, int dst_lane_id, std::vector<RouteNode>& now_route, std::set<int>& arrival){
@@ -31,9 +34,10 @@ bool SourceLane::_dfs_route(int now_intersection_id, int last_lane_id, int dst_l
     }
     for(int i = 0; i < (int)out_lanes_id.size(); i++){
         if(_scenario_p->lanes[out_lanes_id[i]].second >= 0
-                && arrival.find(_scenario_p->lanes[out_lanes_id[i]].second) == arrival.end()
-                && _dfs_route(_scenario_p->lanes[out_lanes_id[i]].second, out_lanes_id[i], dst_lane_id, now_route, arrival))
+                && !arrival.count(_scenario_p->lanes[out_lanes_id[i]].second)
+                && _dfs_route(_scenario_p->lanes[out_lanes_id[i]].second, out_lanes_id[i], dst_lane_id, now_route, arrival)) {
             return true;
+        }
     }
     now_route.pop_back();
     now_route.pop_back();
@@ -47,8 +51,10 @@ void SourceLane::update(){
         std::uniform_int_distribution<int> distribution(0, _scenario_p->dst_lanes_id.size() - 1);
         int dst_lane_id = _scenario_p->dst_lanes_id[distribution(*_gen_p)];
         _dfs_route(_scenario_p->lanes[_id].second, _id, dst_lane_id, now_route, arrival);
-        Vehicle* veh_p = new Vehicle(now_route, _scenario_p);
-        _scenario_p->vehicles.insert(veh_p);
-        veh_p->go_next();
+        //Vehicle* veh_p = new Vehicle(now_route, _scenario_p);
+        //_scenario_p->vehicles.insert(veh_p);
+        Vehicle *veh_p = _simulator_p->generate_vehicle(now_route);
+        //veh_p->go_next();
+        _simulator_p->tell_go_next(veh_p);
     }
 }

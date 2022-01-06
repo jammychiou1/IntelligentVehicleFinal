@@ -3,13 +3,14 @@
 #include "intersection_controller.h"
 
 #include "vehicle.h"
+#include "simulator.h"
 
 using std::pair, std::vector, std::map;
 using std::make_pair;
 
-IntersectionController::IntersectionController(int id, vector<int> conflict_zone_ids, map<int, vector<TrajectoryDesc>> in_lane_to_trajectories, int *time_p) {
+IntersectionController::IntersectionController(int id, vector<int> conflict_zone_ids, map<int, vector<TrajectoryDesc>> in_lane_to_trajectories, Simulator* simulator_p) {
     //assert(time_p != nullptr);
-    _time_p = time_p;
+    _simulator_p = simulator_p;
     for (int czid : conflict_zone_ids) {
         _conflict_zones[czid] = {};
     }

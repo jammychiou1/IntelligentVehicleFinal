@@ -4,10 +4,11 @@
 #include <queue>
 
 class Vehicle;
+class Simulator;
 
 class LaneController{
 	public:
-		LaneController(int id = 0, int waiting_time = 0, int *time_p = nullptr);
+		LaneController(int id = 0, int waiting_time = 0, Simulator* simulator_p = nullptr);
 		void enter(Vehicle *veh_p);
 		void update();
 		//int id;
@@ -19,6 +20,7 @@ class LaneController{
 		std::deque<_VehTime> queue;
 		int *_time_p;
         int _waiting_time;
+        Simulator *_simulator_p;
 };
 
 #endif

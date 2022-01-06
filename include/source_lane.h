@@ -4,14 +4,14 @@
 #include <set>
 #include <random>
 
-#include "vehicle.h"
+#include "route.h"
 
-#include "scenario.h"
-class Vehicle;
+class Scenario;
+class Simulator;
 
 class SourceLane{
     public:
-        SourceLane(int id = 0, double prob = 0.0, Scenario* scenario_p = nullptr, std::default_random_engine* gen_p = nullptr);
+        SourceLane(int id = 0, double prob = 0.0, Scenario* scenario_p = nullptr, Simulator* simulator_p = nullptr, std::default_random_engine* gen_p = nullptr);
         void update();
     private:
         int _id;
@@ -20,6 +20,8 @@ class SourceLane{
         std::uniform_real_distribution<double> _distribution;
         std::default_random_engine* _gen_p;
         bool _dfs_route(int, int, int, std::vector<RouteNode>&, std::set<int>&);
+
+        Simulator* _simulator_p;
 };
 
 #endif

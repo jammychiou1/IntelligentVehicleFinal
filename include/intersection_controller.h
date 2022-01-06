@@ -8,6 +8,7 @@
 #include "graph.h"
 
 class Vehicle;
+class Simulator;
 
 struct TrajectoryDesc {
     //int in_lane_id;
@@ -17,7 +18,7 @@ struct TrajectoryDesc {
 
 class IntersectionController {
     public:
-        IntersectionController(int id = 0, std::vector<int> conflict_zone_ids = {}, std::map<int, std::vector<TrajectoryDesc>> in_lane_to_trajectories = {}, int *time_p = nullptr);
+        IntersectionController(int id = 0, std::vector<int> conflict_zone_ids = {}, std::map<int, std::vector<TrajectoryDesc>> in_lane_to_trajectories = {}, Simulator* simulator_p = nullptr);
 		void enter(Vehicle *veh_p, int in_lane_id, int out_lane_id);
 		void update();
     private:
@@ -44,7 +45,7 @@ class IntersectionController {
         std::map<Vehicle*, _VehState> _vehicle_states;
         std::map<int, _InLane> _in_lanes;
         std::map<int, _ConflictZone> _conflict_zones;
-        int *_time_p;
+        Simulator *_simulator_p;
 };
 
 #endif
