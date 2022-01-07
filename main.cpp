@@ -10,13 +10,14 @@
 using std::cin;
 int main(int argc, const char* argv[]) {
     std::istream *is;
+    std::ifstream fs(argv[1], std::fstream::in);
     if (argc < 2) {
         //simulator = Simulator(std::cin);
         is = &cin;
     }
     else {
-        std::ifstream fs(argv[1], std::fstream::in);
         //simulator = Simulator(fs);
+        fs = std::ifstream(argv[1], std::fstream::in);
         is = &fs;
     }
     Simulator simulator(*is);

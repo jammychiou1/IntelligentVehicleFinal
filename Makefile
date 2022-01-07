@@ -12,7 +12,7 @@ OBJS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 TARGET := test/graph test/optimize main
 
 CC := g++
-CCFLAGS := -Wall -std=gnu++17 -ggdb
+CCFLAGS := -Wall -std=gnu++17 -ggdb -fsanitize=address -fsanitize=undefined
 
 all: $(TARGET)
 
