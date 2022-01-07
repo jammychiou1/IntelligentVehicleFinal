@@ -16,7 +16,7 @@ class Graph {
         int add_type3_pair(int u1, int v1, int u2, int v2);
         void change_used(std::map<int, bool> used);
 
-        // call before calc_time/ optimize
+        // call before calc_time / optimize
         void update_time_now(int now);
         
         // need to commit / calc after optimize
