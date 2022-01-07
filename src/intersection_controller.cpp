@@ -57,5 +57,5 @@ void IntersectionController::enter(Vehicle *veh_p, int in_lane_id, int out_lane_
     _vehicle_states[veh_p] = state;
 }
 
-void update() {
+void IntersectionController::update() {
 }

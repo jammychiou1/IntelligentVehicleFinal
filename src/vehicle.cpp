@@ -14,9 +14,9 @@ Vehicle::Vehicle(vector<RouteNode> route, Scenario *scenario, Simulator *simulat
     _scenario = scenario;
     _simulator = simulator;
 }
-//void Vehicle::go_next() {
-//    _should_go_next = true;
-//}
+void Vehicle::go_next() {
+   _should_go_next = true;
+}
 void Vehicle::update() {
 	if (_should_go_next) {
 		_now_location++;

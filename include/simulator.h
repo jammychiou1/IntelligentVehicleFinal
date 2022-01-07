@@ -3,8 +3,13 @@
 
 #include <set>
 #include <vector>
+#include <map>
 
 #include "route.h"
+#include "intersection_controller.h"
+#include "lane_controller.h"
+#include "source_lane.h"
+#include "destination_lane.h"
 
 class Vehicle;
 class Scenario;
@@ -32,6 +37,10 @@ class Simulator {
         };
 
         std::set<Vehicle*> _vehicles;
+        std::map<int, IntersectionController> _intersections;
+        std::map<int, LaneController> _lane_controllers; 
+        std::map<int, SourceLane> _source_lanes;
+        std::map<int, DestinationLane> _destination_lanes;
         Scenario* _scenario_p;
         std::vector<_EnterIntersectionInfo> _enter_intsersection_infos;
         std::vector<_EnterLaneInfo> _enter_lane_infos;
