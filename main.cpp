@@ -9,7 +9,9 @@
 
 using std::cin;
 int main(int argc, const char* argv[]) {
-    Simulator(std::cin);
-    // fstream fs("input.txt", std::fstream::in);
-    // Simulator(fs);
+    if (argc < 2) Simulator(std::cin);
+    else{
+        fstream fs(argv[1], std::fstream::in);
+        Simulator(fs);
+    }    
 }
