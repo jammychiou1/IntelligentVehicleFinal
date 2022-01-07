@@ -5,11 +5,11 @@
 
 Simulator::Simulator(std::istream &is) {
     int n, m;
-    double prob;
-    is >> n >> m >> prob;
+    is >> n >> m;
     for (int i = 0; i < m; i++) {
         int id, src, dst, waiting_time;
-        is >> id >> src >> dst >> waiting_time;
+        double prob;
+        is >> id >> src >> dst >> waiting_time >> prob;
         _scenario.lanes[id] = std::pair<int,int>(src, dst);
         if (src == -1) {
             SourceLane source_lane(_lane_id_counter, prob, &_scenario, this, &_gen);
