@@ -32,6 +32,10 @@ Vehicle* Simulator::generate_vehicle(std::vector<RouteNode> route) {
 void Simulator::remove_vehicle(Vehicle* veh_p) {
     _remove_buffer.push_back(veh_p);
 }
+int Simulator::get_time() {
+    return _time;
+}
+
 void Simulator::start_simulation() {
     while (true) {
         // updates

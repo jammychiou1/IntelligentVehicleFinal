@@ -15,12 +15,12 @@ LaneController::LaneController(int id, int waiting_time, Simulator* simulator_p)
 void LaneController::enter(Vehicle *veh_p) {
 	_VehTime tmp;
 	tmp.veh_p = veh_p;
-	tmp.in_time = *_time_p;
+	tmp.in_time = _simulator_p->get_time();
 	queue.push_back(tmp);
 }
 
 void LaneController::update(){
-	while (queue.size() > 0 && queue.front().in_time + _waiting_time <= *_time_p) {
+	while (queue.size() > 0 && queue.front().in_time + _waiting_time <= _simulator_p->get_time()) {
 		Vehicle* veh_p = queue.front().veh_p;
         queue.pop_front();
         _simulator_p->tell_go_next(veh_p);

@@ -17,6 +17,7 @@ class Simulator {
         void tell_go_next(Vehicle* veh_p);
         Vehicle* generate_vehicle(std::vector<RouteNode> route);
         void remove_vehicle(Vehicle* veh_p);
+        int get_time();
         void start_simulation();
     private:
         struct _EnterIntersectionInfo {
@@ -37,6 +38,7 @@ class Simulator {
         std::vector<Vehicle*> _go_next_info;
         std::vector<Vehicle*> _generate_buffer;
         std::vector<Vehicle*> _remove_buffer;
+        int _time = 0;
 };
 
 #endif

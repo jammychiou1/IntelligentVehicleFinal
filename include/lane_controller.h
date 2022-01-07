@@ -18,7 +18,6 @@ class LaneController{
 			int in_time;
 		};
 		std::deque<_VehTime> queue;
-		int *_time_p;
         int _waiting_time;
         Simulator *_simulator_p;
 };
