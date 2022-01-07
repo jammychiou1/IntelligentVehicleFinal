@@ -8,7 +8,7 @@
 using std::pair, std::vector, std::map;
 using std::make_pair;
 
-IntersectionController::IntersectionController(int id, vector<int> conflict_zone_ids, map<int, vector<TrajectoryDesc>> in_lane_to_trajectories, Simulator* simulator_p) {
+IntersectionController::IntersectionController(int id, std::vector<int> conflict_zone_ids, std::map<int, std::vector<TrajectoryDesc>> in_lane_to_trajectories, Simulator* simulator_p) {
     //assert(time_p != nullptr);
     _simulator_p = simulator_p;
     for (int czid : conflict_zone_ids) {

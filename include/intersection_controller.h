@@ -14,6 +14,7 @@ struct TrajectoryDesc {
     //int in_lane_id;
     int out_lane_id;
     std::vector<int> conflict_zone_ids;
+    std::vector<int> travel_times;
 };
 
 class IntersectionController {
