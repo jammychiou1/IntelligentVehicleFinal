@@ -25,11 +25,14 @@ void Vehicle::update() {
 			if (node.type == RouteNodeType::intersection) {
                 _simulator->tell_enter_intersection(this, node.id, _route[_now_location - 1].id, _route[_now_location + 1].id);
                 //_scenario->intersections[node.id].enter(this, _route[_now_location - 1].id, _route[_now_location + 1].id);
+                std::cout << std::hex << this << std::dec << " go to intersection " << node.id << " in lane " << _route[_now_location - 1].id << " out lane " << _route[_now_location + 1].id << '\n';
 			}
 			else {
                 _simulator->tell_enter_lane(this, node.id);
                 //_scenario->lane_controllers[node.id].enter(this);
+                std::cout << std::hex << this << std::dec << " go to lane " << node.id << '\n';
 			}
 		}
+       _should_go_next = false;
 	}
 }

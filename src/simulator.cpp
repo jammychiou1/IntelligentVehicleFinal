@@ -1,3 +1,4 @@
+#include <cassert>
 #include "simulator.h"
 
 #include "vehicle.h"
@@ -16,7 +17,7 @@ Simulator::Simulator(std::istream &is) {
             _source_lanes[_lane_id_counter] = source_lane;
         }
         else if (dst == -1) {
-            _scenario.dst_lanes_id.push_back(dst);
+            _scenario.dst_lanes_id.push_back(id);
             DestinationLane dst_lane(_lane_id_counter, &_scenario, this);
             _destination_lanes[_lane_id_counter] = dst_lane;
         }
@@ -70,6 +71,7 @@ Simulator::Simulator(std::istream &is) {
         }
         _scenario.connectivity[_intersection_id_counter] = connected;
         IntersectionController intersection_controller(_intersection_id_counter, total_conflict_zone_ids, in_lane_to_trajectories, this);
+        _intersections[_intersection_id_counter] = intersection_controller;
         _intersection_id_counter++;
     }   
 }
@@ -92,7 +94,7 @@ void Simulator::tell_go_next(Vehicle* veh_p) {
     _go_next_info.push_back(veh_p);
 }
 Vehicle* Simulator::generate_vehicle(std::vector<RouteNode> route) {
-    Vehicle *veh_p = new Vehicle(route, &_scenario);
+    Vehicle *veh_p = new Vehicle(route, &_scenario, this);
     _generate_buffer.push_back(veh_p);
     return veh_p;
 }
@@ -105,19 +107,31 @@ int Simulator::get_time() {
 
 void Simulator::start_simulation() {
     while (true) {
+        std::cout << "now " << _time << '\n';
         // updates
         for (Vehicle* veh_p : _vehicles) veh_p->update();
-        for (auto p : _intersections) p.second.update();
-        for (auto p : _lane_controllers) p.second.update();
-        for (auto p : _source_lanes) p.second.update();
-        for (auto p : _destination_lanes) p.second.update();
+        for (auto &p : _intersections) p.second.update();
+        for (auto &p : _lane_controllers) p.second.update();
+        for (auto &p : _source_lanes) p.second.update();
+        for (auto &p : _destination_lanes) p.second.update();
         // flush buffer
         for (auto p : _enter_intsersection_infos) {
             _intersections[p.intersection_id].enter(p.veh_p, p.in_lane_id, p.out_lane_id);
         }
         _enter_intsersection_infos.clear();
         for (auto p : _enter_lane_infos) {
-            _lane_controllers[p.lane_id].enter(p.veh_p);
+            if (_lane_controllers.count(p.lane_id)) {
+                _lane_controllers[p.lane_id].enter(p.veh_p);
+            }
+            else if (_source_lanes.count(p.lane_id)) {
+                //_source_lanes[p.lane_id].enter(p.veh_p);
+            }
+            else if (_destination_lanes.count(p.lane_id)) {
+                _destination_lanes[p.lane_id].enter(p.veh_p);
+            }
+            else {
+                assert(false);
+            }
         }
         _enter_lane_infos.clear();
         for (Vehicle* veh_p : _go_next_info) {
@@ -129,6 +143,7 @@ void Simulator::start_simulation() {
         }
         _generate_buffer.clear();
         for (Vehicle* veh_p : _remove_buffer) {
+            _vehicles.erase(veh_p);
             delete veh_p;
         }
         _remove_buffer.clear();

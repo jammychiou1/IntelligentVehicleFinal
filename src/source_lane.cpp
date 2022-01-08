@@ -44,6 +44,7 @@ bool SourceLane::_dfs_route(int now_intersection_id, int last_lane_id, int dst_l
     return false;
 }
 void SourceLane::update(){
+    //std::cout << "source lane update " << _id << '\n';
     double number = _distribution(*_gen_p);
     if(number < _prob){
         std::vector<RouteNode> now_route;

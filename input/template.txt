@@ -1,0 +1,21 @@
+n (number of intersections)
+m (number of lanes)
+for every lanes
+  lane_id src_intersection  dst_intersection waiting_time <probability of generating vehicle>
+  // src_intersection = -1 if this lane is source
+  // dst_intersection = -1 if this lane is destination
+for every intersections
+  intersection_id  
+  number of conflict zones
+  for every conflict zones
+    <conflict_zone_id> <x,y coordination of conflict zones>
+  <number of in lanes> //<list of in lanes>
+  //<number of out lanes> //<list of out lanes>
+  for every in lane
+      in lane id
+      number of trajectories
+      for every trajectories
+        out lane
+        conflict_zones_length
+        array of conflict_zone_id
+        array of travel time

@@ -39,6 +39,7 @@ class IntersectionController {
             int out_lane_id;
             bool added;
 
+            int exit_intersection_time;
             int path_id;
             std::deque<_VehAction> actions;
         };
@@ -57,6 +58,7 @@ class IntersectionController {
         //struct _ConflictZone {
         //    std::vector<std::pair<int, int>> trajectories_over;
         //};
+        int _id;
         Graph _graph;
         std::map<Vehicle*, _VehState> _vehicle_states;
         std::map<int, _InLane> _in_lanes;

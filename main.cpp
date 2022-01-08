@@ -21,4 +21,5 @@ int main(int argc, const char* argv[]) {
         is = &fs;
     }
     Simulator simulator(*is);
+    simulator.start_simulation();
 }
