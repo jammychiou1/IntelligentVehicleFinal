@@ -54,7 +54,7 @@ void Graph::add_type2_edge(int u, int v) {
     assert(_nodes.count(u));
     assert(_nodes.count(v));
     assert(_nodes[u].path_id < _nodes[v].path_id);
-    assert(!_nodes[u].time_fixed);
+    assert(!_nodes[v].time_fixed);
     //assert(!_paths[_nodes[v].path_id].time_fixed);
     _Edge edge;
 
@@ -78,8 +78,8 @@ int Graph::add_type3_pair(int u1, int v1, int u2, int v2) {
     assert(_nodes[u1].path_id != _nodes[u2].path_id);
     //assert(!_paths[_nodes[u1].path_id].time_fixed);
     //assert(!_paths[_nodes[u2].path_id].time_fixed);
-    assert(!_nodes[u1].time_fixed);
-    assert(!_nodes[u2].time_fixed);
+    assert(!_nodes[v1].time_fixed);
+    assert(!_nodes[v2].time_fixed);
     _Edge edge1, edge2;
     _Type3Pair t3p;
     t3p.use_first = false;
@@ -117,12 +117,27 @@ int Graph::add_type3_pair(int u1, int v1, int u2, int v2) {
 void Graph::remove_node(int u) {
     assert(_nodes.count(u));
     assert(_pairs.empty());
-    assert(_nodes[u].in_deg == 0);
+    //assert(_nodes[u].in_deg == 0);
     assert(_nodes[u].time_fixed);
     //assert(_paths[_nodes[u].path_id].time_fixed);
     for (auto p : _nodes[u].adjs) {
         _Edge edge = p.second;
         _nodes[edge.v].in_deg--;
+    }
+    for (auto &p : _nodes) {
+        _Node &node = p.second;
+        // TODO better removing
+        vector<int> remove_edges;
+        for (auto &q : node.adjs) {
+            _Edge eg = q.second;
+            if (eg.v == u) {
+                assert(q.first == eg.id);
+                remove_edges.push_back(eg.id);
+            }
+        }
+        for (int eid : remove_edges) {
+            node.adjs.erase(eid);
+        }
     }
     assert(_paths[_nodes[u].path_id].nodes.front() == u);
     _paths[_nodes[u].path_id].nodes.pop_front();
@@ -158,13 +173,19 @@ bool Graph::calc_time() {
         if (node.tmp_in_deg == 0) {
             queue.push_back(node.id);
         }
-        node.tmp_time = max(_time_now, node.lowest_time);
+        if (node.time_fixed) {
+            node.tmp_time = node.lowest_time;
+        }
+        else {
+            node.tmp_time = max(_time_now, node.lowest_time);
+        }
     }
     int cnt = 0;
     while (!queue.empty()) {
         int u = queue.front();
         queue.pop_front();
         cnt++;
+        //vector<int> remove_edges;
         for (auto p : _nodes[u].adjs) {
             _Edge edge = p.second;
             if (edge.type == 3) {
@@ -184,12 +205,22 @@ bool Graph::calc_time() {
                     }
                 }
             }
+            //if (edge.type == 2) {
+            //    if (!_nodes.count(edge.v)) {
+            //        remove_edges.push_back(p.first);
+            //        continue;
+            //    }
+            //}
+            assert(_nodes.count(edge.v));
             _nodes[edge.v].tmp_time = max(_nodes[edge.v].tmp_time, _nodes[u].tmp_time + _nodes[u].delay);
             _nodes[edge.v].tmp_in_deg--;
             if (_nodes[edge.v].tmp_in_deg == 0) {
                 queue.push_back(edge.v);
             }
         }
+        //for (int eid : remove_edges) {
+        //    _nodes[u].adjs.erase(eid);
+        //}
     }
     if (cnt != (int)_nodes.size()) {
         return false;
@@ -267,7 +298,7 @@ void Graph::optimize() {
     for (auto p : _pairs) {
         considered_pairs.push_back(p.first);
     }
-    _optimize_sub(considered_pairs, considered_pairs);
+    _optimize_sub(considered_paths, considered_pairs);
     for (auto p : _pairs) {
         assert(p.second.enabled);
     }

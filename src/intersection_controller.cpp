@@ -58,6 +58,7 @@ void IntersectionController::enter(Vehicle *veh_p, int in_lane_id, int out_lane_
     state.out_lane_id = out_lane_id;
     state.actions = {};
     state.added = false;
+    state.exit_intersection_time = -1;
     _vehicle_states[veh_p] = state;
 }
 
@@ -90,6 +91,24 @@ void IntersectionController::update() {
                 action.travel_time = trvl_times[i];
                 tmp_actions.push_back(action);
             }
+            //add type 2
+            //for (int i = 0; i < (int) tmp_actions.size() - 1; i++) {
+            //    _VehAction action = tmp_actions[i];
+            //    for (auto &q : _vehicle_states) {
+            //        _VehState &other_state = q.second;
+            //        for (int j = 0; j < (int) other_state.actions.size() - 1; j++) {
+            //            _VehAction other_action = other_state.actions[j];
+            //            _VehAction other_next_action = other_state.actions[j + 1];
+            //            if (action.to == other_action.from) {
+            //                assert(action.to != -1);
+            //                if (other_state.in_lane_id == state.in_lane_id || other_action.frozen /* || j == 0 */) {
+            //                    _graph.add_type2_edge(other_action.node_id, action.node_id);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            //add type 3
             for (int i = 0; i < (int) tmp_actions.size() - 1; i++) {
                 _VehAction action = tmp_actions[i];
                 for (auto &q : _vehicle_states) {
@@ -100,6 +119,7 @@ void IntersectionController::update() {
                             assert(action.to != -1);
                             _VehAction next_action = tmp_actions[i + 1];
                             _VehAction other_next_action = other_state.actions[j + 1];
+
                             if (other_state.in_lane_id == state.in_lane_id || other_action.frozen) {
                                 _graph.add_type2_edge(other_next_action.node_id, action.node_id);
                             }
@@ -117,7 +137,7 @@ void IntersectionController::update() {
     // schedule new vehicle
     _graph.update_time_now(time_now + 1);
     _graph.optimize();
-    _graph.calc_time();
+    assert(_graph.calc_time());
     _graph.commit_used();
     // freeze near future actions
     // anounce about-to-happen actions and remove
@@ -128,6 +148,7 @@ void IntersectionController::update() {
         if (!state.added) {
             continue;
         }
+        //freeze
         for (_VehAction &action : state.actions) {
             if (action.frozen) {
                 continue;
@@ -143,36 +164,67 @@ void IntersectionController::update() {
                 break;
             }
         }
-        if (state.actions.empty()) {
-            if (state.exit_intersection_time == time_now + 1) {
-                _simulator_p->tell_go_next(veh_p);
-                remove_buffer.push_back(veh_p);
-            }
-        }
-        else {
-            while (true) {
-                _VehAction action = state.actions.front();
+        //anounce
+        for (_VehAction action : state.actions) {
+            if (action.frozen) {
+                //assert(action.start_time >= time_now + 1);
                 if (action.start_time == time_now + 1) {
-                    assert(action.frozen);
                     std::cout << "intersection tell " << std::hex << veh_p << std::dec << " time [" << action.start_time << ", " << action.end_time << ") from " << action.from << " to " << action.to << '\n';
-                    _graph.remove_node(action.node_id);
                     if (action.from == -1) {
                         assert(_in_lanes[state.in_lane_id].queued_vehicles.front() == veh_p);
                         _in_lanes[state.in_lane_id].queued_vehicles.pop_front();
                     }
                     if (action.to == -1) {
-                        assert(state.actions.size() == 1);
-                        state.actions.pop_front();
                         state.exit_intersection_time = action.end_time;
-                        break;
                     }
-                    state.actions.pop_front();
-                }
-                else {
-                    break;
                 }
             }
         }
+        //remove
+        if (state.exit_intersection_time == time_now + 1 && state.exit_intersection_time != -1) {
+            for (_VehAction action : state.actions) {
+                _graph.remove_node(action.node_id);
+            }
+            remove_buffer.push_back(veh_p);
+            _simulator_p->tell_go_next(veh_p);
+        }
+        //while (!state.actions.empty()) {
+        //    _VehAction action = state.actions.front();
+        //    if (action.end_time == time_now + 1) {
+        //        state.actions.pop_front();
+        //        _graph.remove_node(action.node_id);
+        //        if (state.actions.empty()) {
+        //            assert(state.exit_intersection_time == time_now + 1);
+        //            _simulator_p->tell_go_next(veh_p);
+        //            remove_buffer.push_back(veh_p);
+        //        }
+        //    }
+        //    else {
+        //        break;
+        //    }
+        //}
+
+        //while (true) { _VehAction action = state.actions.front();
+        //    if (action.start_time == time_now + 1) {
+        //        assert(action.frozen);
+        //        std::cout << "intersection tell " << std::hex << veh_p << std::dec << " time [" << action.start_time << ", " << action.end_time << ") from " << action.from << " to " << action.to << '\n';
+        //        _graph.remove_node(action.node_id);
+        //        if (action.from == -1) {
+        //            assert(_in_lanes[state.in_lane_id].queued_vehicles.front() == veh_p);
+        //            _in_lanes[state.in_lane_id].queued_vehicles.pop_front();
+        //        }
+        //        if (action.to == -1) {
+        //            assert(state.actions.size() == 1);
+        //            state.actions.pop_front();
+        //            state.exit_intersection_time = action.end_time;
+        //            break;
+        //        }
+        //        state.actions.pop_front();
+        //    }
+        //    else {
+        //        break;
+        //    }
+        //}
     }
     for (Vehicle *veh_p : remove_buffer) {
         _vehicle_states.erase(veh_p);
