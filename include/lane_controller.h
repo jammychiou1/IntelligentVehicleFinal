@@ -13,6 +13,7 @@ class LaneController{
 		void update();
 		//int id;
 	private:
+		int _id;
 		struct _VehTime{
 			Vehicle *veh_p;
 			int in_time;

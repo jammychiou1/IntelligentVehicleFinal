@@ -1,12 +1,12 @@
 #include <cassert>
-
+#include <iostream>
 #include "lane_controller.h"
 
 #include "vehicle.h"
 #include "simulator.h"
 
 LaneController::LaneController(int id, int waiting_time, Simulator* simulator_p) {
-	//id = id;
+	_id = id;
     //assert(time_p != nullptr);
     _simulator_p = simulator_p;
 	_waiting_time = waiting_time;
@@ -17,6 +17,7 @@ void LaneController::enter(Vehicle *veh_p) {
 	tmp.veh_p = veh_p;
 	tmp.in_time = _simulator_p->get_time();
 	queue.push_back(tmp);
+	printf("vehicle %d enter lane %d at %d and leave at %d\n", veh_p->get_id(), _id, _simulator_p->get_time(), _simulator_p->get_time() + _waiting_time);
 }
 
 void LaneController::update(){

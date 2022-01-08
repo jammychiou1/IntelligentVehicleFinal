@@ -54,7 +54,7 @@ void SourceLane::update(){
         _dfs_route(_scenario_p->lanes[_id].second, _id, dst_lane_id, now_route, arrival);
         //Vehicle* veh_p = new Vehicle(now_route, _scenario_p);
         //_scenario_p->vehicles.insert(veh_p);
-        Vehicle *veh_p = _simulator_p->generate_vehicle(now_route);
+        Vehicle *veh_p = _simulator_p->generate_vehicle(now_route, _id);
         //veh_p->go_next();
         _simulator_p->tell_go_next(veh_p);
     }

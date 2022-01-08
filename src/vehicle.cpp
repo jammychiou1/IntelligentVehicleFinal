@@ -7,8 +7,9 @@
 
 using std::vector;
 
-Vehicle::Vehicle(vector<RouteNode> route, Scenario *scenario, Simulator *simulator) {
-	_route = route;
+Vehicle::Vehicle(int id, vector<RouteNode> route, Scenario *scenario, Simulator *simulator) {
+	_id = id;
+   _route = route;
 	_should_go_next = false;
 	_now_location = 0;
     _scenario = scenario;
@@ -35,4 +36,7 @@ void Vehicle::update() {
 		}
        _should_go_next = false;
 	}
+}
+int Vehicle::get_id() {
+   return _id;
 }

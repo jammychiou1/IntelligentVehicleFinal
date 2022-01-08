@@ -10,10 +10,12 @@ class Simulator;
 
 class Vehicle {
 	public:
-		Vehicle(std::vector<RouteNode> route = {}, Scenario *scenario = nullptr, Simulator *simulator = nullptr);
+		Vehicle(int id = 0, std::vector<RouteNode> route = {}, Scenario *scenario = nullptr, Simulator *simulator = nullptr);
         void go_next();
 		void update();
+		int get_id();
 	private:
+		int _id;
 		std::vector<RouteNode> _route;
 		bool _should_go_next;
 		int _now_location;

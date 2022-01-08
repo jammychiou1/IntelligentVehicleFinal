@@ -9,8 +9,8 @@ Simulator::Simulator(std::istream &is) {
     is >> n >> m;
     for (int i = 0; i < m; i++) {
         int id, src, dst, waiting_time;
-        double prob;
-        is >> id >> src >> dst >> waiting_time >> prob;
+        double prob, x, y;
+        is >> id >> src >> dst >> waiting_time >> prob >> x >> y >> x >> y;
         _scenario.lanes[id] = std::pair<int,int>(src, dst);
         if (src == -1) {
             SourceLane source_lane(_lane_id_counter, prob, &_scenario, this, &_gen);
@@ -93,12 +93,15 @@ void Simulator::tell_enter_lane(Vehicle* veh_p, int lane_id) {
 void Simulator::tell_go_next(Vehicle* veh_p) {
     _go_next_info.push_back(veh_p);
 }
-Vehicle* Simulator::generate_vehicle(std::vector<RouteNode> route) {
-    Vehicle *veh_p = new Vehicle(route, &_scenario, this);
+Vehicle* Simulator::generate_vehicle(std::vector<RouteNode> route, int src_lane_id) {
+    Vehicle *veh_p = new Vehicle(_vehicle_id_counter, route, &_scenario, this);
     _generate_buffer.push_back(veh_p);
+    printf("generate vehicle %d at lane %d\n", _vehicle_id_counter, src_lane_id);
+    _vehicle_id_counter++;
     return veh_p;
 }
 void Simulator::remove_vehicle(Vehicle* veh_p) {
+    printf("delete vehicle %d\n", veh_p->get_id());
     _remove_buffer.push_back(veh_p);
 }
 int Simulator::get_time() {

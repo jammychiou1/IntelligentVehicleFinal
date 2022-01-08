@@ -22,7 +22,7 @@ class Simulator {
         void tell_enter_intersection(Vehicle* veh_p, int intersection_id, int in_lane_id, int out_lane_id);
         void tell_enter_lane(Vehicle* veh_p, int lane_id);
         void tell_go_next(Vehicle* veh_p);
-        Vehicle* generate_vehicle(std::vector<RouteNode> route);
+        Vehicle* generate_vehicle(std::vector<RouteNode> route, int src_lane_id);
         void remove_vehicle(Vehicle* veh_p);
         int get_time();
         void start_simulation();
@@ -37,7 +37,7 @@ class Simulator {
             Vehicle* veh_p;
             int lane_id;
         };
-        int _lane_id_counter = 0, _intersection_id_counter = 0;
+        int _lane_id_counter = 0, _intersection_id_counter = 0, _vehicle_id_counter = 0;
         std::default_random_engine _gen;
         Scenario _scenario;
         std::set<Vehicle*> _vehicles;
