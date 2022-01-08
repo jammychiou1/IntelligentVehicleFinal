@@ -169,7 +169,20 @@ void IntersectionController::update() {
             if (action.frozen) {
                 //assert(action.start_time >= time_now + 1);
                 if (action.start_time == time_now + 1) {
-                    std::cout << "intersection tell " << std::hex << veh_p << std::dec << " time [" << action.start_time << ", " << action.end_time << ") from " << action.from << " to " << action.to << '\n';
+                    std::string from_str, to_str;
+                    if (action.from == -1) {
+                        from_str = "lane " + std::to_string(state.in_lane_id);
+                    }
+                    else {
+                        from_str = "conflict zone " + std::to_string(action.from);
+                    }
+                    if (action.to == -1) {
+                        to_str = "lane " + std::to_string(state.out_lane_id);
+                    }
+                    else {
+                        to_str = "conflict zone " + std::to_string(action.to);
+                    }
+                    std::cout << "move " <<  veh_p->get_id() << " in intersection " << _id << " from " << from_str << " to " << to_str << " in time [" << action.start_time << ", " << action.end_time << "]\n";
                     if (action.from == -1) {
                         assert(_in_lanes[state.in_lane_id].queued_vehicles.front() == veh_p);
                         _in_lanes[state.in_lane_id].queued_vehicles.pop_front();

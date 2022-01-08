@@ -110,7 +110,7 @@ int Simulator::get_time() {
 
 void Simulator::start_simulation() {
     while (true) {
-        std::cout << "now " << _time << '\n';
+        std::cout << _time << '\n';
         // updates
         for (Vehicle* veh_p : _vehicles) veh_p->update();
         for (auto &p : _intersections) p.second.update();
