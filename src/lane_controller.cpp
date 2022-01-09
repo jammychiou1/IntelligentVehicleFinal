@@ -17,7 +17,7 @@ void LaneController::enter(Vehicle *veh_p) {
 	tmp.veh_p = veh_p;
 	tmp.in_time = _simulator_p->get_time();
 	queue.push_back(tmp);
-	printf("vehicle %d enter lane %d at %d and leave at %d\n", veh_p->get_id(), _id, _simulator_p->get_time(), _simulator_p->get_time() + _waiting_time);
+	printf("vehicle %d enter lane %d at time %d and will leave at time %d\n", veh_p->get_id(), _id, _simulator_p->get_time(), _simulator_p->get_time() + _waiting_time);
 }
 
 void LaneController::update(){

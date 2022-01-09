@@ -11,7 +11,7 @@ using std::max;
 const int INF = 1e9;
 
 Graph::Graph() {
-    cout << "graph created\n";
+    // cout << "graph created\n";
 }
 
 pair<int, vector<int>> Graph::add_path(std::vector<int> delays, int start_time) {
